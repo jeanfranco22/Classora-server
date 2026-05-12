@@ -6,7 +6,7 @@ export class PurchaseMembershipDto {
   @ApiProperty({ example: 'uuid-del-usuario' })
   @IsUUID()
   @IsNotEmpty()
-  userId: string;
+  studentId: string;
 
   @ApiProperty({ example: 'uuid-de-la-membresia' })
   @IsUUID()
