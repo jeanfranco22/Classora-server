@@ -6,12 +6,12 @@ export class SendMessageDto {
   @ApiProperty({ example: 'uuid-de-la-conversacion' })
   @IsUUID()
   @IsNotEmpty()
-  conversationId: string;
+  conversationId!: string;
 
   @ApiProperty({ example: 'Hola, necesito ayuda con mi rutina' })
   @IsString()
   @IsNotEmpty()
-  content: string;
+  content!: string;
 
   // El senderId lo obtendremos del usuario autenticado, no lo envía el cliente
 }
