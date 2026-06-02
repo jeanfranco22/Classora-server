@@ -31,7 +31,13 @@ export class ResponseClassSchedule {
   };
 
   @IsNotEmpty()
-  coach: {
+  teacher: {
+    id: string;
+    name: string;
+    email: string;
+  };
+
+  coach?: {
     id: string;
     name: string;
     email: string;

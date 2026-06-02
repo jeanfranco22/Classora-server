@@ -30,6 +30,11 @@ export class AuthController {
   async signup(@Body() dto: CreateUserDto) {
     return this.authService.signup(dto);
   }
+
+  @Post('register')
+  async register(@Body() dto: CreateUserDto) {
+    return this.authService.signup(dto);
+  }
   // AUTH/ME → devuelve el usuario del token (sin password)
   @UseGuards(JwtAuthGuard)
   @Get('me')
