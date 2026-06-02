@@ -62,6 +62,13 @@ export class ReservationsController {
 
   @Roles(Role.TEACHER, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('teacher/me')
+  getCurrentTeacherReservations(@Req() req: AuthenticatedRequest) {
+    return this.reservationService.get_reservations_by_coach(req.user.id);
+  }
+
+  @Roles(Role.TEACHER, Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('teacher/:teacherId')
   getReservationsByTeacher(
     @Param('teacherId', ParseUUIDPipe) teacherId: string,

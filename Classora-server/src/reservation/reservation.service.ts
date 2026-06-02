@@ -4,6 +4,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ReservationRepository } from './reservation.repository';
 import { usersRepository } from 'src/users/users.repository';
 import { ClassScheduleRepository } from 'src/class_schedule/class_schedule.repository';
@@ -20,6 +21,7 @@ export class ReservationService {
     private classScheduleRepository: ClassScheduleRepository,
     private paymentsService: PaymentsService,
     private classRepository: ClassRepository,
+    private configService: ConfigService,
   ) {}
 
   async reserve(id_user: string, id_class_schedule: string) {
@@ -47,6 +49,11 @@ export class ReservationService {
       );
     }
 
+    const betaAllowsReservationsWithoutTokens =
+      this.configService.get<string>(
+        'BETA_ALLOW_RESERVATIONS_WITHOUT_TOKENS',
+      ) === 'true';
+
     // Extraemos el dato de el costo de tokens de la clase
     const class_cost_tokens = find_class_schedule.token;
     const user_tokens = find_user.tokenBalance;
@@ -55,18 +62,20 @@ export class ReservationService {
     const reservation_description = `Reserva clase ${find_class_schedule.class.name} - ${find_class_schedule.date.toString()} ${find_class_schedule.time}`;
 
     // Chequeamos que el usuario tengo la cantidad de tokens suficientes para gastar en la clase
-    if (user_tokens < class_cost_tokens) {
+    if (!betaAllowsReservationsWithoutTokens && user_tokens < class_cost_tokens) {
       throw new UnauthorizedException(
         'No tiene tokens suficientes para acceder a esta clase',
       );
     }
 
-    // Si tiene los tokens suficientes le restamos tokens del usuario con spendTokens de paymentsService
-    await this.paymentsService.spendTokens(
-      id_user,
-      class_cost_tokens,
-      reservation_description,
-    );
+    if (!betaAllowsReservationsWithoutTokens) {
+      // Si tiene los tokens suficientes le restamos tokens del usuario con spendTokens de paymentsService
+      await this.paymentsService.spendTokens(
+        id_user,
+        class_cost_tokens,
+        reservation_description,
+      );
+    }
 
     // Restamos el espacio en la clase en - 1 si hay cupo
     find_class_by_schedule -= 1;
