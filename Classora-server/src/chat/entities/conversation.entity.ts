@@ -24,7 +24,7 @@ export enum ConversationStatus {
 @Entity({ name: 'conversations' })
 export class Conversation {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   // Estado actual de la conversación
   @Column({
@@ -32,37 +32,37 @@ export class Conversation {
     enum: ConversationStatus,
     default: ConversationStatus.ACTIVE,
   })
-  status: ConversationStatus;
+  status!: ConversationStatus;
 
   // Fecha de creación (se llena automáticamente)
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   // Se actualiza cada vez que llega un mensaje nuevo
   // Útil para ordenar conversaciones por "más recientes" en el panel del coach
   @UpdateDateColumn()
-  lastMessageAt: Date;
+  lastMessageAt!: Date;
 
   // ManyToOne = muchas conversaciones → un usuario (el cliente)
   // nullable: false = siempre debe haber un usuario asignado
   @ManyToOne(() => User, { nullable: false })
   @JoinColumn({ name: 'userId' })
-  user: User;
+  user!: User;
 
   // ManyToOne = muchas conversaciones → un coach
   // nullable: false = siempre debe haber un coach asignado
   @ManyToOne(() => User, { nullable: false })
   @JoinColumn({ name: 'coachId' })
-  coach: User;
+  teacher!: User;
 
   @ManyToOne(() => Class_schedule, { nullable: true })
   @JoinColumn({ name: 'classScheduleId' })
-  class_schedule: Class_schedule;
+  class_schedule!: Class_schedule;
 
   // OneToMany = una conversación → muchos mensajes
   // cascade: true = al borrar la conversación, se borran todos sus mensajes
   @OneToMany(() => Message, (message) => message.conversation, {
     cascade: true,
   })
-  messages: Message[];
+  messages!: Message[];
 }
