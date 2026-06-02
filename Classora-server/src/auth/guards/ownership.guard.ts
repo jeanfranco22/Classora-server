@@ -13,7 +13,7 @@ export class OwnerOrAdminGuard implements CanActivate {
     const user = request.user as User;
     const userId = request.params.id;
 
-    if (user.role === Role.Admin) return true;
+    if (user.role === Role.ADMIN) return true;
     if (user.id === userId) return true;
 
     throw new ForbiddenException('No tiene permisos para realizar esta acción');

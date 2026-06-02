@@ -3,7 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
-import { CoachModule } from '../coach/coach.module';
+import { TeacherModule } from '../teacher/teacher.module';
 import { NotificationsModule } from 'src/notifications/notifications.module';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule } from '@nestjs/config';
@@ -14,7 +14,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   imports: [
     NotificationsModule,
     forwardRef(() => UsersModule),
-    forwardRef(() => CoachModule),
+    forwardRef(() => TeacherModule),
 
     // Passport necesario para AuthGuard('google')
     PassportModule,

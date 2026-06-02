@@ -36,7 +36,7 @@ export class ClassController {
   }
 
   @ApiBearerAuth()
-  @Roles(Role.Coach, Role.Admin)
+  @Roles(Role.TEACHER, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('all')
   @HttpCode(200)
@@ -45,7 +45,7 @@ export class ClassController {
   }
 
   @ApiBearerAuth()
-  @Roles(Role.Coach, Role.Admin)
+  @Roles(Role.TEACHER, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('create')
   @HttpCode(201)
@@ -54,7 +54,7 @@ export class ClassController {
   }
 
   @ApiBearerAuth()
-  @Roles(Role.Coach, Role.Admin)
+  @Roles(Role.TEACHER, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Put(':id')
   @HttpCode(200)
@@ -66,7 +66,7 @@ export class ClassController {
   }
 
   @ApiBearerAuth()
-  @Roles(Role.Coach, Role.Admin)
+  @Roles(Role.TEACHER, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch('delete/:id')
   @HttpCode(200)
@@ -75,7 +75,7 @@ export class ClassController {
   }
 
   @ApiBearerAuth()
-  @Roles(Role.Coach, Role.Admin)
+  @Roles(Role.TEACHER, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch('active/:id')
   activeClass(@Param('id', ParseUUIDPipe) id: string) {
@@ -84,7 +84,7 @@ export class ClassController {
 
   // SUBIR IMAGEN DE CLASE (Cloudinary)
   @ApiBearerAuth()
-  @Roles(Role.Coach, Role.Admin)
+  @Roles(Role.TEACHER, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post(':id/image')
   @UseInterceptors(

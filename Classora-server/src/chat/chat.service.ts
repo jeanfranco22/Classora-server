@@ -68,7 +68,7 @@ export class ChatService {
     const coach = await this.userRepository.findOne({
       where: { id: coachId },
     });
-    if (!coach || coach.role !== Role.Coach) {
+    if (!coach || coach.role !== Role.TEACHER) {
       throw new BadRequestException('El coach especificado no es válido');
     }
 

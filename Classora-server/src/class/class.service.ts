@@ -45,7 +45,7 @@ export class ClassService {
     // 2) Subo imagen nueva a Cloudinary (carpeta de clases)
     const uploaded = await this.filesService.uploadImage(
       file,
-      'powergym/classes',
+      'classora/classes',
     );
 
     // 3) Borro la anterior si existÃ­a

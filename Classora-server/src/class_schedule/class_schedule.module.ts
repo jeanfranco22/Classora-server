@@ -10,7 +10,7 @@ import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from 'src/auth/auth.module';
 import { ClassModule } from 'src/class/class.module';
-import { CoachModule } from 'src/coach/coach.module';
+import { TeacherModule } from 'src/teacher/teacher.module';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { CoachModule } from 'src/coach/coach.module';
     forwardRef(() => UsersModule),
     forwardRef(() => JwtModule),
     forwardRef(() => ClassModule),
-    forwardRef(() => CoachModule),
+    forwardRef(() => TeacherModule),
   ],
   controllers: [ClassesScheduleController],
   providers: [ClassScheduleService, ClassScheduleRepository],

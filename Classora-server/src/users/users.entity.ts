@@ -39,7 +39,7 @@ export class User {
   @Column({ type: 'date', nullable: true })
   Birthdate: Date | null;
 
-  @Column({ type: 'enum', enum: Role, default: Role.User })
+  @Column({ type: 'enum', enum: Role, default: Role.STUDENT })
   role: Role;
 
   @Column({ type: 'text', nullable: true })

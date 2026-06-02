@@ -58,7 +58,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return;
     }
 
-    if (user.role === Role.User) {
+    if (user.role === Role.STUDENT) {
       const hasAccess = await this.chatService.canUserAccessChat(userId);
       if (!hasAccess) {
         console.log(`Usuario ${userId} sin acceso al chat, desconectando...`);
