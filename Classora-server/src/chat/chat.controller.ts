@@ -35,7 +35,7 @@ export class ChatController {
   // POST /chat/conversations — Crear conversación (Admin asigna coach)
   @ApiBearerAuth()
   @Post('conversations')
-  @Roles(Role.Admin)
+  @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({
     summary: 'Crear conversación asignando coach a usuario (Admin)',
@@ -89,7 +89,7 @@ export class ChatController {
   // POST /chat/faqs — Crear respuesta automática
   @ApiBearerAuth()
   @Post('faqs')
-  @Roles(Role.Admin)
+  @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Crear FAQ para el chatbot (Admin)' })
   createFAQ(@Body() dto: CreateFAQDto) {
@@ -106,7 +106,7 @@ export class ChatController {
   // PATCH /chat/faqs/:id — Actualizar FAQ
   @ApiBearerAuth()
   @Patch('faqs/:id')
-  @Roles(Role.Admin)
+  @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Actualizar FAQ (Admin)' })
   updateFAQ(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateFAQDto) {
@@ -116,7 +116,7 @@ export class ChatController {
   // DELETE /chat/faqs/:id — Eliminar FAQ
   @ApiBearerAuth()
   @Delete('faqs/:id')
-  @Roles(Role.Admin)
+  @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Eliminar FAQ (Admin)' })
   deleteFAQ(@Param('id', ParseUUIDPipe) id: string) {

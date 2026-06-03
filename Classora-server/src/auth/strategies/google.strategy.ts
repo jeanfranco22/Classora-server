@@ -3,6 +3,12 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, Profile, VerifyCallback } from 'passport-google-oauth20';
 import { ConfigService } from '@nestjs/config';
 
+const getRequiredGoogleConfig = (
+  configService: ConfigService,
+  key: string,
+  fallback: string,
+) => configService.get<string>(key)?.trim() || fallback;
+
 @Injectable()
 // Esta clase es la que Passport va a usar cuando alguien entre a /auth/google
 // Básicamente: le enseña a Nest cómo hablar con Google OAuth.
@@ -12,13 +18,25 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       // clientID = "quién soy yo para Google"
       // Google te lo dio cuando creaste el OAuth Client
-      clientID: configService.get<string>('GOOGLE_CLIENT_ID') as string,
+      clientID: getRequiredGoogleConfig(
+        configService,
+        'GOOGLE_CLIENT_ID',
+        'google-client-id-not-configured',
+      ),
 
       // clientSecret = contraseña privada entre nuestro backend y Google
-      clientSecret: configService.get<string>('GOOGLE_CLIENT_SECRET') as string,
+      clientSecret: getRequiredGoogleConfig(
+        configService,
+        'GOOGLE_CLIENT_SECRET',
+        'google-client-secret-not-configured',
+      ),
 
       // a dónde Google vuelve después del login
-      callbackURL: configService.get<string>('GOOGLE_CALLBACK_URL') as string,
+      callbackURL: getRequiredGoogleConfig(
+        configService,
+        'GOOGLE_CALLBACK_URL',
+        'http://localhost:3030/auth/google/callback',
+      ),
 
       // qué datos le pedimos a Google
       // profile = nombre + foto

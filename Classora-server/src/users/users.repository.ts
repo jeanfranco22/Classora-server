@@ -26,7 +26,7 @@ export class usersRepository {
     const allUsers = await this.usersRepository.find({
       skip: skip,
       take: limit,
-      where: { role: Role.User },
+      where: { role: Role.STUDENT },
       relations: ['memberships'],
     });
 
@@ -35,7 +35,7 @@ export class usersRepository {
 
   async getUserById(id: string) {
     const user = await this.usersRepository.findOne({
-      where: { id, role: Role.User },
+      where: { id, role: Role.STUDENT },
       relations: [
         'memberships',
         'transactions',
@@ -63,7 +63,7 @@ export class usersRepository {
   async promoteUserToAdmin(id: string) {
     const user = await this.usersRepository.findOneBy({ id });
     if (!user) throw new NotFoundException('El usuario no fue encontrado');
-    user.role = Role.Admin;
+    user.role = Role.ADMIN;
     await this.usersRepository.save(user);
     return 'El usuario ahora es un administrador';
   }
@@ -199,7 +199,7 @@ export class usersRepository {
     user.phone = data.phone?.toString();
     user.address = data.address;
     user.city = data.city;
-    user.Birthdate = data.Birthdate;
+    user.Birthdate = new Date(data.birthdate);
     user.profileImg = data.profileImg ?? user.profileImg;
 
     user.isProfileComplete = true;

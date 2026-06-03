@@ -29,7 +29,7 @@ export class MembershipController {
   // (en producción aquí irá un guard de admin)
   @ApiBearerAuth()
   @Post()
-  @Roles(Role.Admin)
+  @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Crear nuevo tipo de membresía (Admin)' })
   create(@Body() dto: CreateMembershipDto) {
@@ -46,7 +46,7 @@ export class MembershipController {
   // GET /memberships/admin — Devuelve TODOS los planes incluyendo inactivos
   @ApiBearerAuth()
   @Get('admin')
-  @Roles(Role.Admin)
+  @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Listar todas las membresías (Admin)' })
   findAll() {
@@ -65,7 +65,7 @@ export class MembershipController {
   // PATCH = actualización parcial (solo los campos que envíes), a diferencia de PUT que reemplaza todo
   @ApiBearerAuth()
   @Patch(':id')
-  @Roles(Role.Admin)
+  @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Actualizar membresía (Admin)' })
   update(
@@ -78,7 +78,7 @@ export class MembershipController {
   // DELETE /memberships/:id — Desactiva la membresía (no la borra físicamente)
   @ApiBearerAuth()
   @Delete(':id')
-  @Roles(Role.Admin)
+  @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Desactivar membresía (Admin)' })
   deactivate(@Param('id', ParseUUIDPipe) id: string) {
@@ -86,7 +86,7 @@ export class MembershipController {
   }
 
   @ApiBearerAuth()
-  @Roles(Role.Admin)
+  @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch('active/:id')
   activateMembership(@Param('id', ParseUUIDPipe) id: string) {

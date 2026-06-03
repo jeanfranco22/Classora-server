@@ -2,6 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Class_schedule } from './class_schedule.entity';
 import { ClassesScheduleController } from './class_schedule.controller';
+import { ClassSchedulesController } from './class-schedules.controller';
 import { ClassScheduleService } from './class_schedule.service';
 import { ClassScheduleRepository } from './class_schedule.repository';
 import { Class } from 'src/class/class.entity';
@@ -10,7 +11,7 @@ import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from 'src/auth/auth.module';
 import { ClassModule } from 'src/class/class.module';
-import { CoachModule } from 'src/coach/coach.module';
+import { TeacherModule } from 'src/teacher/teacher.module';
 
 @Module({
   imports: [
@@ -19,9 +20,9 @@ import { CoachModule } from 'src/coach/coach.module';
     forwardRef(() => UsersModule),
     forwardRef(() => JwtModule),
     forwardRef(() => ClassModule),
-    forwardRef(() => CoachModule),
+    forwardRef(() => TeacherModule),
   ],
-  controllers: [ClassesScheduleController],
+  controllers: [ClassesScheduleController, ClassSchedulesController],
   providers: [ClassScheduleService, ClassScheduleRepository],
   exports: [ClassScheduleService, ClassScheduleRepository],
 })

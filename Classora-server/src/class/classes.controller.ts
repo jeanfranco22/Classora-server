@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -8,30 +9,28 @@ import {
   Patch,
   Post,
   Put,
+  UploadedFile,
   UseGuards,
   UseInterceptors,
-  UploadedFile,
-  BadRequestException,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { memoryStorage } from 'multer';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Role } from 'src/common/roles.enum';
 import { ClassService } from './class.service';
 import { CreateClass } from './dtos/CreateClass.dto';
 import { UpdateClass } from './dtos/UpdateClass.dto';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { Role } from 'src/common/roles.enum';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
-import { FileInterceptor } from '@nestjs/platform-express';
-import { memoryStorage } from 'multer';
-import { ApiBearerAuth } from '@nestjs/swagger';
-
-@Controller('clases')
-export class ClassController {
+@Controller('classes')
+export class ClassesController {
   constructor(private readonly classService: ClassService) {}
 
-  @Get('/')
+  @Get()
   @HttpCode(200)
-  get_all_classes() {
+  getActiveClasses() {
     return this.classService.get_classes();
   }
 
@@ -40,17 +39,17 @@ export class ClassController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('all')
   @HttpCode(200)
-  get_all_classes_admin() {
+  getAllClasses() {
     return this.classService.get_all_classes();
   }
 
   @ApiBearerAuth()
   @Roles(Role.TEACHER, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Post('create')
+  @Post()
   @HttpCode(201)
-  create_new_class(@Body() clase: CreateClass) {
-    return this.classService.create_new_class(clase);
+  createClass(@Body() dto: CreateClass) {
+    return this.classService.create_new_class(dto);
   }
 
   @ApiBearerAuth()
@@ -58,31 +57,30 @@ export class ClassController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Put(':id')
   @HttpCode(200)
-  update_a_class(
+  updateClass(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() clase: UpdateClass,
+    @Body() dto: UpdateClass,
   ) {
-    return this.classService.update_class(id, clase);
+    return this.classService.update_class(id, dto);
   }
 
   @ApiBearerAuth()
   @Roles(Role.TEACHER, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Patch('delete/:id')
+  @Patch(':id/inactive')
   @HttpCode(200)
-  delete_a_class(@Param('id', ParseUUIDPipe) id: string) {
+  inactiveClass(@Param('id', ParseUUIDPipe) id: string) {
     return this.classService.delete_class(id);
   }
 
   @ApiBearerAuth()
   @Roles(Role.TEACHER, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Patch('active/:id')
+  @Patch(':id/active')
   activeClass(@Param('id', ParseUUIDPipe) id: string) {
     return this.classService.activeClass(id);
   }
 
-  // SUBIR IMAGEN DE CLASE (Cloudinary)
   @ApiBearerAuth()
   @Roles(Role.TEACHER, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -95,7 +93,7 @@ export class ClassController {
         const ok = /image\/(jpeg|jpg|png|webp)/.test(file.mimetype);
         if (!ok) {
           return cb(
-            new BadRequestException('Formato de imagen invÃ¡lido'),
+            new BadRequestException('Formato de imagen invalido'),
             false,
           );
         }

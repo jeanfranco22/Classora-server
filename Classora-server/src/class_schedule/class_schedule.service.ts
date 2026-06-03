@@ -7,19 +7,19 @@ import { DataSource } from 'typeorm';
 import { Class_schedule } from './class_schedule.entity';
 import { Reservation } from 'src/reservation/reservation.entity';
 import { User } from 'src/users/users.entity';
-import { coachRepository } from 'src/coach/coach.repository';
+import { TeacherRepository } from 'src/teacher/teacher.repository';
 import { ClassRepository } from 'src/class/class.repository';
 import { ResponseClassSchedule } from './dtos/ResponseClassSchedule.dto';
 import { Role } from 'src/common/roles.enum';
 
-type CoachAssignment = Pick<User, 'id' | 'name' | 'email'>;
+type TeacherAssignment = Pick<User, 'id' | 'name' | 'email'>;
 
 @Injectable({})
 export class ClassScheduleService {
   constructor(
     private readonly classScheduleRepository: ClassScheduleRepository,
     private readonly classRepository: ClassRepository,
-    private readonly coachRepository: coachRepository,
+    private readonly teacherRepository: TeacherRepository,
     private dataSource: DataSource,
   ) {}
 
@@ -32,7 +32,6 @@ export class ClassScheduleService {
     id_class: string,
     user: JwtPayload,
   ) {
-    console.log(user);
     // Buscamos la clase a la cual queremos hacerle una cita
     const find_class = await this.classRepository.find_class_by_id(id_class);
 
@@ -44,11 +43,11 @@ export class ClassScheduleService {
 
     // Asignamos coach (llamada local)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    const coach_id = user.role === Role.Coach ? (user as any).id : undefined;
+    const teacherId = user.role === Role.TEACHER ? user.sub : undefined;
     const assigned_coach = await this.coach_assign(
       clase_app.date,
       clase_app.time,
-      coach_id,
+      teacherId,
     );
 
     // Guardamos usando el REPOSITORIO
@@ -81,6 +80,11 @@ export class ClassScheduleService {
       token: schedule.token!,
       isActive: schedule.isActive!,
       class: { id: schedule.class.id, name: schedule.class.name },
+      teacher: {
+        id: schedule.coach.id,
+        name: schedule.coach.name,
+        email: schedule.coach.email,
+      },
       coach: {
         id: schedule.coach.id,
         name: schedule.coach.name,
@@ -197,10 +201,10 @@ export class ClassScheduleService {
     time: string,
     id?: string,
     exclude_id?: string,
-  ): Promise<CoachAssignment> {
+  ): Promise<TeacherAssignment> {
     // Si el que creo la clase es Coach
     if (id) {
-      const coach = await this.coachRepository.getCoachById(id);
+      const coach = await this.teacherRepository.getTeacherById(id);
 
       const is_occupied = await this.dataSource
         .getRepository(Class_schedule)
@@ -215,7 +219,7 @@ export class ClassScheduleService {
 
       if (is_occupied) {
         throw new BadRequestException(
-          'Ya tenes una clase asignada en esa fecha/horario',
+          'Ya tienes una clase asignada en esa fecha/horario',
         );
       }
 
@@ -223,9 +227,9 @@ export class ClassScheduleService {
     }
 
     // Si es admin
-    const coaches = await this.coachRepository.getAllCoaches(1, 10);
+    const teachers = await this.teacherRepository.getAllTeachers(1, 10);
 
-    for (const candidate of coaches) {
+    for (const candidate of teachers) {
       // Si el candidato es el que estamos inhabilitando, lo saltamos
       if (exclude_id && candidate.id === exclude_id) continue;
 
@@ -244,7 +248,7 @@ export class ClassScheduleService {
     }
 
     throw new BadRequestException(
-      'No hay coaches disponibles para este horario',
+      'No hay profesores disponibles para este horario',
     );
   }
 }

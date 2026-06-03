@@ -19,5 +19,9 @@ export class CreateClassSchedule {
 
   @IsOptional()
   @IsString()
+  teacherId?: string;
+
+  @IsOptional()
+  @IsString()
   id_coach?: string;
 }

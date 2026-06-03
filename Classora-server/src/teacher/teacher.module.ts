@@ -1,9 +1,9 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { CoachService } from './coach.service';
-import { CoachController } from './coach.controller';
+import { TeacherService } from './teacher.service';
+import { TeacherController } from './teacher.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/users/users.entity';
-import { coachRepository } from './coach.repository';
+import { TeacherRepository } from './teacher.repository';
 import { AuthModule } from 'src/auth/auth.module';
 import { UsersModule } from 'src/users/users.module';
 import { NotificationsModule } from 'src/notifications/notifications.module';
@@ -15,10 +15,10 @@ import { ClassScheduleModule } from 'src/class_schedule/class_schedule.module';
     forwardRef(() => AuthModule),
     forwardRef(() => UsersModule),
     NotificationsModule,
-    ClassScheduleModule,
+    forwardRef(() => ClassScheduleModule),
   ],
-  controllers: [CoachController],
-  providers: [CoachService, coachRepository],
-  exports: [coachRepository],
+  controllers: [TeacherController],
+  providers: [TeacherService, TeacherRepository],
+  exports: [TeacherRepository],
 })
-export class CoachModule {}
+export class TeacherModule {}

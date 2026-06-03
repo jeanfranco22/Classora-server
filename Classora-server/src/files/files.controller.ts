@@ -56,7 +56,7 @@ export class FilesController {
     // Subo imagen nueva
     const uploaded = await this.filesService.uploadImage(
       file,
-      'powergym/users',
+      'classora/users',
     );
 
     // Borro anterior si existía
