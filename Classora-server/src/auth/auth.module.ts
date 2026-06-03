@@ -7,6 +7,7 @@ import { TeacherModule } from '../teacher/teacher.module';
 import { NotificationsModule } from 'src/notifications/notifications.module';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule } from '@nestjs/config';
+import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
@@ -28,7 +29,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   ],
   controllers: [AuthController],
 
-  providers: [AuthService, GoogleStrategy, JwtStrategy],
+  providers: [AuthService, GoogleAuthGuard, GoogleStrategy, JwtStrategy],
 
   exports: [JwtModule],
 })
