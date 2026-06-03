@@ -28,7 +28,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  @Roles(Role.Admin)
+  @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   getAllUsers(@Query('page') page: string, @Query('limit') limit: string) {
     const pageNum = Number(page);
@@ -41,7 +41,7 @@ export class UsersController {
   }
 
   @Get('email')
-  @Roles(Role.Admin, Role.Coach)
+  @Roles(Role.ADMIN, Role.TEACHER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   getByEmail(@Query() email: GetByEmailDto) {
     return this.usersService.getByEmail(email);
@@ -63,7 +63,7 @@ export class UsersController {
   }
 
   @Put('promote/:id')
-  @Roles(Role.Admin)
+  @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   promoteUserToAdmin(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.promoteUserToAdmin(id);

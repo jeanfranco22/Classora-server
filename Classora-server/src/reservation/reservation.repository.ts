@@ -163,9 +163,9 @@ export class ReservationRepository {
       },
       relations: [
         'users',
-        'Class_schedule',
-        'Class_schedule.class',
-        'Class_schedule.coach',
+        'class_schedule',
+        'class_schedule.class',
+        'class_schedule.coach',
       ],
       select: {
         id: true,

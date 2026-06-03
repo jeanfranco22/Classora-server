@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { coachRepository } from './coach.repository';
-import { UpdateCoachDto } from './dto/updateCoach.dto';
+import { TeacherRepository } from './teacher.repository';
+import { UpdateTeacherDto } from './dto/updateTeacher.dto';
 import { GetByEmailDto } from 'src/users/dto/getByEmail.dto';
 import * as bcrypt from 'bcrypt';
 import { NotificationsService } from 'src/notifications/notifications.service';
@@ -10,46 +10,49 @@ import { Class_schedule } from 'src/class_schedule/class_schedule.entity';
 import { ClassScheduleService } from 'src/class_schedule/class_schedule.service';
 
 @Injectable()
-export class CoachService {
+export class TeacherService {
   constructor(
-    private readonly coachRepository: coachRepository,
+    private readonly teacherRepository: TeacherRepository,
     private readonly classScheduleService: ClassScheduleService,
     private readonly notificationsService: NotificationsService,
     private dataSource: DataSource,
   ) {}
 
-  getAllCoaches(page: number, limit: number) {
-    return this.coachRepository.getAllCoaches(page, limit);
+  getAllTeachers(page: number, limit: number) {
+    return this.teacherRepository.getAllTeachers(page, limit);
   }
 
-  getCoachById(id: string) {
-    return this.coachRepository.getCoachById(id);
+  getTeacherById(id: string) {
+    return this.teacherRepository.getTeacherById(id);
   }
 
-  async updateCoach(id: string, newCoachData: UpdateCoachDto) {
-    if (newCoachData.password) {
-      if (newCoachData.password !== newCoachData.confirmPassword) {
+  async updateTeacher(id: string, newTeacherData: UpdateTeacherDto) {
+    if (newTeacherData.password) {
+      if (newTeacherData.password !== newTeacherData.confirmPassword) {
         throw new BadRequestException('Las contraseñas no coinciden');
       }
 
-      const hashedPassword = await bcrypt.hash(newCoachData.password, 10);
-      newCoachData.password = hashedPassword;
+      const hashedPassword = await bcrypt.hash(newTeacherData.password, 10);
+      newTeacherData.password = hashedPassword;
     }
 
-    delete newCoachData.confirmPassword;
+    delete newTeacherData.confirmPassword;
 
-    const coach = await this.coachRepository.updateCoach(id, newCoachData);
-    await this.notificationsService.sendUpdateEmail(coach.name, coach.email);
+    const teacher = await this.teacherRepository.updateTeacher(
+      id,
+      newTeacherData,
+    );
+    await this.notificationsService.sendUpdateEmail(teacher.name, teacher.email);
 
     return 'El perfil se ha actualizado exitosamente';
   }
 
-  async promoteCoach(id: string) {
-    const coach = await this.coachRepository.promoteCoach(id);
+  async promoteTeacher(id: string) {
+    const teacher = await this.teacherRepository.promoteTeacher(id);
     try {
-      await this.notificationsService.promoteCoachEmail(
-        coach.name,
-        coach.email,
+      await this.notificationsService.promoteTeacherEmail(
+        teacher.name,
+        teacher.email,
       );
     } catch (error) {
       console.error(
@@ -57,27 +60,31 @@ export class CoachService {
         error instanceof Error ? error.message : error,
       );
     }
-    return 'El usuario ahora hace parte de los entrenadores del gimnasio';
+    return 'El usuario ahora hace parte del equipo docente de Classora';
   }
 
-  async demoteCoach(id: string) {
-    return this.coachRepository.demoteCoach(id);
+  async demoteTeacher(id: string) {
+    return this.teacherRepository.demoteTeacher(id);
   }
 
-  async inactiveCoach(id: string) {
-    const coach = await this.coachRepository.inactiveCoach(id);
-    await this.disableCoach(id);
-    await this.notificationsService.inactiveUserEmail(coach.name, coach.email);
+  async inactiveTeacher(id: string) {
+    const teacher = await this.teacherRepository.inactiveTeacher(id);
+    await this.disableTeacher(id);
+    await this.notificationsService.inactiveUserEmail(
+      teacher.name,
+      teacher.email,
+    );
     return 'Su cuenta ha sido desactivada exitosamente';
   }
 
-  async disableCoach(id: string) {
+  async disableTeacher(id: string) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      // Inhabilitamos al coach
+      // TODO(Classora): la relación TypeORM todavía se llama "coach".
+      // Debe migrarse a "teacher" con una migración de base de datos.
       await queryRunner.manager.update(User, id, { isActive: false });
 
       // Buscamos clases futuras activas que tenían a este coach
@@ -97,7 +104,7 @@ export class CoachService {
           classSchedule.date,
           classSchedule.time,
           undefined,
-          id, // Excluimos al coach que estamos inhabilitando
+          id, // Excluimos al teacher que estamos inhabilitando.
         );
 
         if (newCoach) {
@@ -123,10 +130,10 @@ export class CoachService {
   }
 
   getNameAndImg() {
-    return this.coachRepository.getNameAndImg();
+    return this.teacherRepository.getNameAndImg();
   }
 
   getByEmail(email: GetByEmailDto) {
-    return this.coachRepository.getByEmail(email);
+    return this.teacherRepository.getByEmail(email);
   }
 }

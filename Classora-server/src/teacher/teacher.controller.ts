@@ -8,8 +8,8 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { CoachService } from './coach.service';
-import { UpdateCoachDto } from './dto/updateCoach.dto';
+import { TeacherService } from './teacher.service';
+import { UpdateTeacherDto } from './dto/updateTeacher.dto';
 import { GetByEmailDto } from 'src/users/dto/getByEmail.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/common/roles.enum';
@@ -19,67 +19,67 @@ import { OwnerOrAdminGuard } from 'src/auth/guards/ownership.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiBearerAuth()
-@Controller('coach')
-export class CoachController {
-  constructor(private readonly coachService: CoachService) {}
+@Controller('teachers')
+export class TeacherController {
+  constructor(private readonly teacherService: TeacherService) {}
 
   @Get()
-  @Roles(Role.Admin)
+  @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  getAllCoaches(@Query('page') page: string, @Query('limit') limit: string) {
+  getAllTeachers(@Query('page') page: string, @Query('limit') limit: string) {
     const pageNum = Number(page);
     const limitNum = Number(limit);
 
     const validPage = !isNaN(pageNum) && pageNum > 0 ? pageNum : 1;
     const validLimit = !isNaN(limitNum) && limitNum > 0 ? limitNum : 10;
 
-    return this.coachService.getAllCoaches(validPage, validLimit);
+    return this.teacherService.getAllTeachers(validPage, validLimit);
   }
 
   @Get('nameAndImg')
   getNameAndImg() {
-    return this.coachService.getNameAndImg();
+    return this.teacherService.getNameAndImg();
   }
 
   @Get('email')
-  @Roles(Role.Admin)
+  @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   getByEmail(@Query() email: GetByEmailDto) {
-    return this.coachService.getByEmail(email);
+    return this.teacherService.getByEmail(email);
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
-  getCoachById(@Param('id', ParseUUIDPipe) id: string) {
-    return this.coachService.getCoachById(id);
+  getTeacherById(@Param('id', ParseUUIDPipe) id: string) {
+    return this.teacherService.getTeacherById(id);
   }
 
   @Put('update/:id')
   @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
-  updateCoach(
+  updateTeacher(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() newCoachData: UpdateCoachDto,
+    @Body() newTeacherData: UpdateTeacherDto,
   ) {
-    return this.coachService.updateCoach(id, newCoachData);
+    return this.teacherService.updateTeacher(id, newTeacherData);
   }
 
   @Put('promote/:id')
-  @Roles(Role.Admin)
+  @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  promoteCoach(@Param('id', ParseUUIDPipe) id: string) {
-    return this.coachService.promoteCoach(id);
+  promoteTeacher(@Param('id', ParseUUIDPipe) id: string) {
+    return this.teacherService.promoteTeacher(id);
   }
 
   @Put('demote/:id')
-  @Roles(Role.Admin)
+  @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  demoteCoach(@Param('id', ParseUUIDPipe) id: string) {
-    return this.coachService.demoteCoach(id);
+  demoteTeacher(@Param('id', ParseUUIDPipe) id: string) {
+    return this.teacherService.demoteTeacher(id);
   }
 
   @Put('inactive/:id')
   @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
-  inactiveCoach(@Param('id', ParseUUIDPipe) id: string) {
-    return this.coachService.inactiveCoach(id);
+  inactiveTeacher(@Param('id', ParseUUIDPipe) id: string) {
+    return this.teacherService.inactiveTeacher(id);
   }
 }

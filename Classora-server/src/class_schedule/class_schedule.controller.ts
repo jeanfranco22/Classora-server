@@ -25,7 +25,7 @@ export class ClassesScheduleController {
   constructor(private readonly classScheduleService: ClassScheduleService) {}
 
   @ApiBearerAuth()
-  @Roles(Role.User, Role.Coach, Role.Admin)
+  @Roles(Role.STUDENT, Role.TEACHER, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('history')
   @HttpCode(200)
@@ -34,7 +34,7 @@ export class ClassesScheduleController {
   }
 
   @ApiBearerAuth()
-  @Roles(Role.Coach, Role.Admin)
+  @Roles(Role.TEACHER, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('appointment')
   @HttpCode(201)
@@ -53,7 +53,7 @@ export class ClassesScheduleController {
   }
 
   @ApiBearerAuth()
-  @Roles(Role.Coach, Role.Admin)
+  @Roles(Role.TEACHER, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Put('cancel/:id')
   @HttpCode(200)

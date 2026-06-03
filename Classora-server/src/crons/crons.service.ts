@@ -19,7 +19,7 @@ export class CronsService {
   async sendActiveUsersReport() {
     const users = await this.usersService.getAllUsers(1, 100);
     const activeUsers = users.filter(
-      (user) => user.role === Role.User && user.isActive === true,
+      (user) => user.role === Role.STUDENT && user.isActive === true,
     );
     await this.notificationsService.sendActiveUsersReport(
       activeUsers,
@@ -34,7 +34,7 @@ export class CronsService {
   async sendActiveUsersReportTryout() {
     const users = await this.usersService.getAllUsers(1, 100);
     const activeUsers = users.filter(
-      (user) => user.role === Role.User && user.isActive === true,
+      (user) => user.role === Role.STUDENT && user.isActive === true,
     );
     await this.notificationsService.sendActiveUsersReport(
       activeUsers,

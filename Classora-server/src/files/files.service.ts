@@ -12,7 +12,7 @@ export class FilesService {
     });
   }
 
-  uploadImage(file: Express.Multer.File, folder = 'powergym/users') {
+  uploadImage(file: Express.Multer.File, folder = 'classora/users') {
     return new Promise<{ secure_url: string; public_id: string }>(
       (resolve, reject) => {
         cloudinary.uploader
