@@ -1,6 +1,24 @@
 import { registerAs } from '@nestjs/config';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-export default registerAs('database', () => ({
-  url: process.env.DATABASE_URL,
-  ssl: true,
-}));
+export default registerAs('database', (): TypeOrmModuleOptions => {
+  const sslEnabled = process.env.DATABASE_SSL === 'true';
+  const isProduction = process.env.NODE_ENV === 'production';
+
+  return {
+    type: 'postgres',
+    host: process.env.DATABASE_HOST,
+    port: Number(process.env.DATABASE_PORT || 5432),
+    username: process.env.DATABASE_USERNAME,
+    password: process.env.DATABASE_PASSWORD,
+    database: process.env.DATABASE_NAME,
+    autoLoadEntities: true,
+    synchronize:
+      !isProduction && process.env.DATABASE_SYNCHRONIZE === 'true',
+    ssl: sslEnabled
+      ? {
+          rejectUnauthorized: false,
+        }
+      : false,
+  };
+});
