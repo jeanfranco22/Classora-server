@@ -199,7 +199,7 @@ export class usersRepository {
     user.phone = data.phone?.toString();
     user.address = data.address;
     user.city = data.city;
-    user.Birthdate = data.Birthdate;
+    user.Birthdate = new Date(data.birthdate);
     user.profileImg = data.profileImg ?? user.profileImg;
 
     user.isProfileComplete = true;

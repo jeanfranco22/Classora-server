@@ -53,7 +53,7 @@ export class Conversation {
   // nullable: false = siempre debe haber un coach asignado
   @ManyToOne(() => User, { nullable: false })
   @JoinColumn({ name: 'coachId' })
-  teacher!: User;
+  coach!: User;
 
   @ManyToOne(() => Class_schedule, { nullable: true })
   @JoinColumn({ name: 'classScheduleId' })

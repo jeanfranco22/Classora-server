@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { ClassModule } from './class/class.module';
 import { ClassScheduleModule } from './class_schedule/class_schedule.module';
+import databaseConfig from './config/database.config';
 import { CronsModule } from './crons/crons.module';
 import { FilesModule } from './files/files.module';
 import { MembershipModule } from './membership/membership.module';
@@ -19,16 +22,14 @@ import { UsersModule } from './users/users.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      load: [databaseConfig],
     }),
-
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      url: process.env.DATABASE_URL,
-      autoLoadEntities: true,
-      synchronize: true,
-      ssl: {
-        rejectUnauthorized: false,
-      },
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) =>
+        configService.get<TypeOrmModuleOptions>(
+          'database',
+        ) as TypeOrmModuleOptions,
     }),
     ScheduleModule.forRoot(),
     NotificationsModule,
@@ -44,5 +45,7 @@ import { UsersModule } from './users/users.module';
     ReservationModule,
     CronsModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
