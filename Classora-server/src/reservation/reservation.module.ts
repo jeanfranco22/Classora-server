@@ -2,6 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Reservation } from './reservation.entity';
 import { ReservationController } from './reservation.controller';
+import { ReservationsController } from './reservations.controller';
 import { ReservationService } from './reservation.service';
 import { ReservationRepository } from './reservation.repository';
 import { JwtModule } from '@nestjs/jwt';
@@ -25,7 +26,7 @@ import { PaymentsModule } from 'src/payments/payments.module';
     ChatModule,
     forwardRef(() => PaymentsModule),
   ],
-  controllers: [ReservationController],
+  controllers: [ReservationController, ReservationsController],
   providers: [ReservationService, ReservationRepository],
   exports: [ReservationRepository],
 })
