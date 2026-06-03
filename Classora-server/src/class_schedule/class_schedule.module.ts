@@ -2,6 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Class_schedule } from './class_schedule.entity';
 import { ClassesScheduleController } from './class_schedule.controller';
+import { ClassSchedulesController } from './class-schedules.controller';
 import { ClassScheduleService } from './class_schedule.service';
 import { ClassScheduleRepository } from './class_schedule.repository';
 import { Class } from 'src/class/class.entity';
@@ -21,7 +22,7 @@ import { TeacherModule } from 'src/teacher/teacher.module';
     forwardRef(() => ClassModule),
     forwardRef(() => TeacherModule),
   ],
-  controllers: [ClassesScheduleController],
+  controllers: [ClassesScheduleController, ClassSchedulesController],
   providers: [ClassScheduleService, ClassScheduleRepository],
   exports: [ClassScheduleService, ClassScheduleRepository],
 })

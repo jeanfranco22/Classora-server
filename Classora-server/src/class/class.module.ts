@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { ClassController } from './class.controller';
+import { ClassesController } from './classes.controller';
 import { ClassService } from './class.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Class } from './class.entity';
@@ -18,7 +19,7 @@ import { FilesModule } from 'src/files/files.module'; // ✅
     forwardRef(() => JwtModule),
     FilesModule,
   ],
-  controllers: [ClassController],
+  controllers: [ClassController, ClassesController],
   providers: [ClassService, ClassRepository],
   exports: [ClassService, ClassRepository],
 })

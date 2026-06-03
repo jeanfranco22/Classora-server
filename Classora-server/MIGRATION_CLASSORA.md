@@ -77,3 +77,101 @@ This phase applies a controlled first migration from the reused PowerGym backend
 - No `.env` files or credentials were changed.
 - No modules were deleted.
 - No database table names were changed.
+
+## Phase 2 implementation summary
+
+This phase exposes a minimal education-domain API for the Classora frontend while preserving the current database model and existing PowerGym-compatible routes.
+
+## Changes applied in Phase 2
+
+- Confirmed work continues on `refactor/classora-backend-phase-2`.
+- Added `POST /auth/register` as an alias of the existing student signup flow.
+- Added `StudentsController` under `/students`, backed by `UsersService`, because `User` still represents the generic account entity.
+- Added `ClassesController` under `/classes` as an education-domain alias for the existing `/clases` routes.
+- Added `ClassSchedulesController` under `/class-schedules` as an education-domain alias for the existing `/class_schedule` routes.
+- Added `ReservationsController` under `/reservations` as an education-domain alias for the existing `/reservation` routes.
+- Added frontend-friendly authenticated routes:
+  - `GET /students/me`
+  - `PATCH /students/me/complete-profile`
+  - `GET /reservations/me`
+- Kept legacy routes active to avoid breaking existing consumers.
+- Updated class schedule DTO/response naming to expose `teacherId` and `teacher` while keeping `id_coach`/`coach` compatibility fields.
+- Fixed class schedule teacher assignment to use the JWT `sub` value instead of a non-existent `user.id`.
+- Updated user-facing class schedule messages from coach wording to teacher/professor wording where it does not affect the database schema.
+
+## Minimal API available after Phase 2
+
+### Auth
+
+- `POST /auth/login`
+- `POST /auth/signup`
+- `POST /auth/register`
+- `GET /auth/me`
+- `GET /auth/google`
+- `GET /auth/google/callback`
+
+### Students
+
+- `GET /students`
+- `GET /students/me`
+- `GET /students/email`
+- `GET /students/:id`
+- `PUT /students/:id`
+- `PATCH /students/me/complete-profile`
+- `PUT /students/:id/inactive`
+- `PUT /students/:id/active`
+
+### Teachers
+
+- `GET /teachers`
+- `GET /teachers/nameAndImg`
+- `GET /teachers/email`
+- `GET /teachers/:id`
+- `PUT /teachers/update/:id`
+- `PUT /teachers/promote/:id`
+- `PUT /teachers/demote/:id`
+- `PUT /teachers/inactive/:id`
+
+### Classes
+
+- `GET /classes`
+- `GET /classes/all`
+- `POST /classes`
+- `PUT /classes/:id`
+- `PATCH /classes/:id/inactive`
+- `PATCH /classes/:id/active`
+- `POST /classes/:id/image`
+
+### Class schedules
+
+- `GET /class-schedules`
+- `POST /class-schedules?classId=:classId`
+- `PUT /class-schedules/:id/cancel`
+
+### Reservations
+
+- `POST /reservations?classScheduleId=:classScheduleId`
+- `PUT /reservations/:id/cancel`
+- `GET /reservations`
+- `GET /reservations/me`
+- `GET /reservations/teacher/:teacherId`
+- `GET /reservations/student/:id`
+
+## Parts that still remain from PowerGym after Phase 2
+
+- Legacy public routes still exist: `/clases`, `/class_schedule`, and `/reservation`.
+- The `User` entity and `users` table still represent students, teachers, and admins.
+- The `class_schedule` relation and database join column still use `coach` and `coach_id`.
+- Reservation internals still call `get_reservations_by_coach`.
+- Chat internals still model `coach`, `coachId`, and coach message types.
+- Memberships, tokens, token packages, and coach-chat subscription fields still reflect the original PowerGym model.
+
+## Phase 2 build result
+
+`npm run build` completed successfully.
+
+## Recommended next phase
+
+- Connect the frontend first to the Phase 2 routes: `/auth`, `/students/me`, `/teachers`, `/classes`, `/class-schedules`, and `/reservations/me`.
+- Add smoke/e2e tests for the frontend contract before deeper renames.
+- Then migrate chat and reservation/class schedule internals from coach naming to teacher naming with a real database migration for `coach_id`.
