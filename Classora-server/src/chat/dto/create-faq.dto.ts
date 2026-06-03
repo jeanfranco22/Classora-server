@@ -6,12 +6,12 @@ export class CreateFAQDto {
   @ApiProperty({ example: 'horario,horarios,hora,cuando' })
   @IsString()
   @IsNotEmpty()
-  keywords: string;
+  keywords!: string;
 
   @ApiProperty({ example: 'Estamos abiertos de lunes a viernes de 6am a 10pm' })
   @IsString()
   @IsNotEmpty()
-  response: string;
+  response!: string;
 
   @ApiPropertyOptional({ example: 5 })
   @IsOptional()

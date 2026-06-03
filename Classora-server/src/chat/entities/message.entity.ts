@@ -22,30 +22,30 @@ export enum MessageType {
 @Entity({ name: 'messages' })
 export class Message {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   // Contenido del mensaje (texto)
   @Column({ type: 'text', nullable: false })
-  content: string;
+  content!: string;
 
   // Tipo de mensaje (ver enum arriba)
   @Column({ type: 'enum', enum: MessageType, nullable: false })
-  type: MessageType;
+  type!: MessageType;
 
   // Si el mensaje fue leído por el destinatario
   // Útil para mostrar el ícono de "visto" en el chat
   @Column({ type: 'boolean', default: false })
-  isRead: boolean;
+  isRead!: boolean;
 
   // Fecha y hora exacta del mensaje (se llena automáticamente)
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   // ManyToOne = muchos mensajes → un remitente (User)
   // El remitente puede ser el usuario cliente O el coach, según el 'type'
   @ManyToOne(() => User, { nullable: false })
   @JoinColumn({ name: 'senderId' })
-  sender: User;
+  sender!: User;
 
   // ManyToOne = muchos mensajes → una conversación
   // onDelete: CASCADE = si se borra la conversación, se borran sus mensajes
@@ -53,5 +53,5 @@ export class Message {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'conversationId' })
-  conversation: Conversation;
+  conversation!: Conversation;
 }
