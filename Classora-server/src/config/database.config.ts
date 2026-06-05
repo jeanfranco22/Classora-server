@@ -13,8 +13,7 @@ export default registerAs('database', (): TypeOrmModuleOptions => {
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE_NAME,
     autoLoadEntities: true,
-    synchronize:
-      !isProduction && process.env.DATABASE_SYNCHRONIZE === 'true',
+    synchronize: process.env.DATABASE_SYNCHRONIZE === 'true',
     ssl: sslEnabled
       ? {
           rejectUnauthorized: false,
