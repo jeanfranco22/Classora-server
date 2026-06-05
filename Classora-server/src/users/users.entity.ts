@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Role } from 'src/common/roles.enum';
+import { Role, ROLE_VALUES } from 'src/common/roles.enum';
 import { UserMembership } from '../user-membership/user-membership.entity';
 import { Transaction } from 'src/transactions/transactions.entity';
 import { Reservation } from 'src/reservation/reservation.entity';
@@ -39,7 +39,7 @@ export class User {
   @Column({ type: 'date', nullable: true })
   Birthdate: Date | null;
 
-  @Column({ type: 'enum', enum: Role, default: Role.STUDENT })
+  @Column({ type: 'enum', enum: ROLE_VALUES, default: Role.STUDENT })
   role: Role;
 
   @Column({ type: 'text', nullable: true })

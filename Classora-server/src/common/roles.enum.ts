@@ -8,3 +8,5 @@ export enum Role {
   Teacher = TEACHER,
   Admin = ADMIN,
 }
+
+export const ROLE_VALUES = [Role.STUDENT, Role.TEACHER, Role.ADMIN] as const;
