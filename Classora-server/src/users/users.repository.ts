@@ -107,6 +107,7 @@ export class usersRepository {
   }
 
   async createUser(dto: CreateUserDto) {
+    const { confirmPassword: _confirmPassword, ...userData } = dto;
     const email = (dto.email || '').trim().toLowerCase();
 
     const exists = await this.usersRepository.findOne({ where: { email } });
@@ -115,7 +116,7 @@ export class usersRepository {
     }
 
     const user = this.usersRepository.create({
-      ...dto,
+      ...userData,
       email,
       isProfileComplete: true,
     });

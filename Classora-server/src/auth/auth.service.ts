@@ -12,6 +12,10 @@ import { CreateUserDto } from '../users/dto/createUser.dto';
 import { User } from '../users/users.entity';
 import { UsersService } from '../users/users.service';
 
+type RegisterPayload = CreateUserDto & {
+  passwordConfirm?: string;
+};
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -75,14 +79,27 @@ export class AuthService {
     };
   }
 
-  async signup(dto: CreateUserDto) {
-    if (dto.password !== dto.confirmPassword) {
+  async signup(dto: RegisterPayload) {
+    const confirmPassword = dto.confirmPassword ?? dto.passwordConfirm;
+
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Register payload check:', {
+        fields: Object.keys(dto),
+        hasPassword: Boolean(dto.password),
+        hasConfirmPassword: Boolean(confirmPassword),
+        passwordsMatch: dto.password === confirmPassword,
+      });
+    }
+
+    if (dto.password !== confirmPassword) {
       throw new BadRequestException('Las contraseñas no coinciden');
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
+    const { passwordConfirm: _passwordConfirm, ...userData } = dto;
     const created = await this.usersService.createUser({
-      ...dto,
+      ...userData,
+      confirmPassword,
       password: hashedPassword,
     });
 
