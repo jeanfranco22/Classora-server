@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Put,
+  Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -19,6 +20,7 @@ import { memoryStorage } from 'multer';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import type { AuthenticatedRequest } from 'src/auth/interfaces/auth-request.interface';
 import { Role } from 'src/common/roles.enum';
 import { ClassService } from './class.service';
 import { CreateClass } from './dtos/CreateClass.dto';
@@ -46,10 +48,19 @@ export class ClassesController {
   @ApiBearerAuth()
   @Roles(Role.TEACHER, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('teacher/me')
+  @HttpCode(200)
+  getCurrentTeacherClasses(@Req() req: AuthenticatedRequest) {
+    return this.classService.get_teacher_classes(req.user.id);
+  }
+
+  @ApiBearerAuth()
+  @Roles(Role.TEACHER, Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   @HttpCode(201)
-  createClass(@Body() dto: CreateClass) {
-    return this.classService.create_new_class(dto);
+  createClass(@Body() dto: CreateClass, @Req() req: AuthenticatedRequest) {
+    return this.classService.create_new_class(dto, req.user.id);
   }
 
   @ApiBearerAuth()

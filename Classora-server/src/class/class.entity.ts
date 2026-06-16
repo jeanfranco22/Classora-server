@@ -1,5 +1,13 @@
 import { Class_schedule } from 'src/class_schedule/class_schedule.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/users/users.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 export enum Intensity {
   Alta = 'alta',
@@ -40,6 +48,13 @@ export class Class {
 
   @OneToMany(() => Class_schedule, (schedule) => schedule.class)
   class_schedule: Class_schedule[];
+
+  @ManyToOne(() => User, (user) => user.createdClasses, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'created_by_id' })
+  createdBy: User | null;
 
   @Column({ type: 'text', nullable: true })
   imgUrl: string | null;

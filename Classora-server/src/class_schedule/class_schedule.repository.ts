@@ -30,8 +30,9 @@ export class ClassScheduleRepository {
     return class_schedule;
   }
 
-  async classes_history() {
+  async classes_history(classId?: string) {
     const schedules = await this.classScheduleRepository.find({
+      where: classId ? { class: { id: classId } } : undefined,
       relations: ['class', 'reservations', 'coach'],
       select: {
         id: true,
@@ -67,6 +68,44 @@ export class ClassScheduleRepository {
       });
     }
     return result;
+  }
+
+  async classes_by_coach(coachId: string) {
+    const schedules = await this.classScheduleRepository.find({
+      where: { coach: { id: coachId } },
+      relations: ['class', 'reservations', 'coach'],
+      select: {
+        id: true,
+        date: true,
+        time: true,
+        token: true,
+        isActive: true,
+        class: {
+          id: true,
+          name: true,
+          duration: true,
+          capacity: true,
+          intensity: true,
+        },
+        coach: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+      order: { date: 'ASC', time: 'ASC' },
+    });
+
+    return schedules.map((schedule) => {
+      const activeReservations = schedule.reservations.filter(
+        (r) => r.status === 'Confirmed',
+      ).length;
+
+      return {
+        ...schedule,
+        spaces_available: schedule.class.capacity - activeReservations,
+      };
+    });
   }
 
   async save_new_schedule(

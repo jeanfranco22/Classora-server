@@ -19,8 +19,12 @@ export class ClassService {
     return this.classRepository.get_all_classes();
   }
 
-  create_new_class(clase: CreateClass) {
-    return this.classRepository.create_class(clase);
+  get_teacher_classes(userId: string) {
+    return this.classRepository.get_classes_by_creator(userId);
+  }
+
+  create_new_class(clase: CreateClass, createdById?: string) {
+    return this.classRepository.create_class(clase, createdById);
   }
 
   update_class(id: string, clase: UpdateClass) {

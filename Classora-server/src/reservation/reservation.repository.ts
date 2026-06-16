@@ -130,7 +130,7 @@ export class ReservationRepository {
   async get_by_id(id: string) {
     const reservations = await this.reservationRepository.find({
       where: { users: { id } },
-      relations: ['class_schedule'],
+      relations: ['class_schedule', 'class_schedule.class', 'class_schedule.coach'],
       select: {
         id: true,
         date: true,
@@ -145,6 +145,11 @@ export class ReservationRepository {
             id: true,
             name: true,
             email: true,
+          },
+          class: {
+            id: true,
+            name: true,
+            duration: true,
           },
         },
       },

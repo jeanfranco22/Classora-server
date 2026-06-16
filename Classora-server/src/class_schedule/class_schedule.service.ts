@@ -23,14 +23,18 @@ export class ClassScheduleService {
     private dataSource: DataSource,
   ) {}
 
-  classes_history() {
-    return this.classScheduleRepository.classes_history();
+  classes_history(classId?: string) {
+    return this.classScheduleRepository.classes_history(classId);
+  }
+
+  classes_by_teacher(teacherId: string) {
+    return this.classScheduleRepository.classes_by_coach(teacherId);
   }
 
   async class_appointment(
     clase_app: CreateClassSchedule,
     id_class: string,
-    user: JwtPayload,
+    user: JwtPayload | User,
   ) {
     // Buscamos la clase a la cual queremos hacerle una cita
     const find_class = await this.classRepository.find_class_by_id(id_class);
@@ -43,7 +47,12 @@ export class ClassScheduleService {
 
     // Asignamos coach (llamada local)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    const teacherId = user.role === Role.TEACHER ? user.sub : undefined;
+    const teacherId =
+      user.role === Role.TEACHER
+        ? 'sub' in user
+          ? user.sub
+          : user.id
+        : undefined;
     const assigned_coach = await this.coach_assign(
       clase_app.date,
       clase_app.time,

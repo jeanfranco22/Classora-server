@@ -9,7 +9,6 @@ import { ReservationRepository } from './reservation.repository';
 import { usersRepository } from 'src/users/users.repository';
 import { ClassScheduleRepository } from 'src/class_schedule/class_schedule.repository';
 import { PaymentsService } from 'src/payments/payments.service';
-import { ClassRepository } from 'src/class/class.repository';
 import { User } from 'src/users/users.entity';
 
 @Injectable()
@@ -20,7 +19,6 @@ export class ReservationService {
     private usersRepository: usersRepository,
     private classScheduleRepository: ClassScheduleRepository,
     private paymentsService: PaymentsService,
-    private classRepository: ClassRepository,
     private configService: ConfigService,
   ) {}
 
@@ -40,10 +38,14 @@ export class ReservationService {
       id_class_schedule,
     );
 
-    // Extraemos la capacidad de la clase con la relacion de Class_schedule con Class
-    let find_class_by_schedule = find_class_schedule.class.capacity;
+    const confirmedReservations =
+      await this.reservationRepository.find_reservation_by_class_schedule(
+        id_class_schedule,
+      );
+    const spacesAvailable =
+      Number(find_class_schedule.class.capacity) - confirmedReservations.length;
 
-    if (find_class_by_schedule <= 0) {
+    if (spacesAvailable <= 0) {
       throw new UnauthorizedException(
         'No hay mas cupos disponibles para la clase',
       );
@@ -76,12 +78,6 @@ export class ReservationService {
         reservation_description,
       );
     }
-
-    // Restamos el espacio en la clase en - 1 si hay cupo
-    find_class_by_schedule -= 1;
-    await this.classRepository.update(find_class_schedule.class.id, {
-      capacity: find_class_by_schedule,
-    });
 
     const new_reservation = await this.reservationRepository.save_reservation({
       date: new Date(),

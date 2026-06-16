@@ -24,7 +24,7 @@ import { ReservationService } from './reservation.service';
 export class ReservationsController {
   constructor(private readonly reservationService: ReservationService) {}
 
-  @Roles(Role.STUDENT, Role.TEACHER, Role.ADMIN)
+  @Roles(Role.STUDENT, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   @HttpCode(201)

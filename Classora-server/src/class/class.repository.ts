@@ -50,6 +50,7 @@ export class ClassRepository {
 
   get_all_classes() {
     return this.classRepository.find({
+      relations: ['createdBy'],
       select: {
         id: true,
         name: true,
@@ -61,6 +62,11 @@ export class ClassRepository {
         intensity: true,
         benefits: true,
         requirements: true,
+        createdBy: {
+          id: true,
+          name: true,
+          email: true,
+        },
       },
       order: { isActive: 'DESC', name: 'ASC' },
     });
@@ -68,7 +74,7 @@ export class ClassRepository {
 
   get_classes() {
     return this.classRepository.find({
-      relations: ['class_schedule'],
+      relations: ['class_schedule', 'createdBy'],
       select: {
         id: true,
         name: true,
@@ -81,19 +87,51 @@ export class ClassRepository {
         intensity: true,
         benefits: true,
         requirements: true,
+        createdBy: {
+          id: true,
+          name: true,
+          email: true,
+        },
       },
     });
   }
 
-  async create_class(clase: CreateClass) {
-    // Guardamos la clase e igualamos el espacio de la clase con el espacio disponible
-    await this.classRepository.save({
+  get_classes_by_creator(userId: string) {
+    return this.classRepository.find({
+      where: { createdBy: { id: userId } },
+      relations: ['class_schedule', 'createdBy'],
+      select: {
+        id: true,
+        name: true,
+        duration: true,
+        description: true,
+        capacity: true,
+        isActive: true,
+        imgUrl: true,
+        class_schedule: true,
+        intensity: true,
+        benefits: true,
+        requirements: true,
+        createdBy: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+      order: { name: 'ASC' },
+    });
+  }
+
+  async create_class(clase: CreateClass, createdById?: string) {
+    const savedClass = await this.classRepository.save({
       ...clase,
+      createdBy: createdById ? { id: createdById } : undefined,
     });
 
     return {
       success: true,
       message: 'Clase creada correctamente',
+      class: savedClass,
     };
   }
 

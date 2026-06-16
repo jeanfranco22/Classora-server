@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Put,
+  Req,
   UseGuards,
   UseInterceptors,
   UploadedFile,
@@ -24,6 +25,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import type { AuthenticatedRequest } from 'src/auth/interfaces/auth-request.interface';
 
 @Controller('clases')
 export class ClassController {
@@ -49,8 +51,8 @@ export class ClassController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('create')
   @HttpCode(201)
-  create_new_class(@Body() clase: CreateClass) {
-    return this.classService.create_new_class(clase);
+  create_new_class(@Body() clase: CreateClass, @Req() req: AuthenticatedRequest) {
+    return this.classService.create_new_class(clase, req.user.id);
   }
 
   @ApiBearerAuth()

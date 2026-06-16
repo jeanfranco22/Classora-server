@@ -175,3 +175,25 @@ This phase exposes a minimal education-domain API for the Classora frontend whil
 - Connect the frontend first to the Phase 2 routes: `/auth`, `/students/me`, `/teachers`, `/classes`, `/class-schedules`, and `/reservations/me`.
 - Add smoke/e2e tests for the frontend contract before deeper renames.
 - Then migrate chat and reservation/class schedule internals from coach naming to teacher naming with a real database migration for `coach_id`.
+
+## Phase 3 Priority 1 flow
+
+This phase completes the real class creation, schedule creation, and reservation flow used by the frontend.
+
+### Changes applied in Phase 3
+
+- Added `Class.createdBy` / `User.createdClasses` to associate a class with the teacher or admin that created it.
+- Added SQL migration `migrations/20260616_add_class_created_by.sql` for production databases that run with `DATABASE_SYNCHRONIZE=false`.
+- Added `GET /classes/teacher/me` to list classes created by the authenticated teacher/admin.
+- Updated `POST /classes` and legacy `POST /clases/create` to store the authenticated creator.
+- Added `GET /class-schedules?classId=:classId` filtering.
+- Added `GET /class-schedules/teacher/me` to list schedules assigned to the authenticated teacher/admin.
+- Fixed class schedule teacher assignment to support the current JWT strategy, which attaches the full `User` entity to `req.user`.
+- Restricted reservation creation to `student` and `admin` roles.
+- Kept duplicate reservation prevention for the same student and schedule.
+- Changed schedule capacity validation to calculate available spaces from confirmed reservations instead of decrementing the class capacity globally.
+- Expanded `GET /reservations/me` to include class and teacher data needed by the frontend.
+
+### Phase 3 build result
+
+`npm run build` completed successfully.

@@ -4,6 +4,7 @@ import { UserMembership } from '../user-membership/user-membership.entity';
 import { Transaction } from 'src/transactions/transactions.entity';
 import { Reservation } from 'src/reservation/reservation.entity';
 import { Class_schedule } from 'src/class_schedule/class_schedule.entity';
+import { Class } from 'src/class/class.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -65,6 +66,9 @@ export class User {
 
   @OneToMany(() => Class_schedule, (schedule) => schedule.coach)
   classSchedules: Class_schedule[];
+
+  @OneToMany(() => Class, (classEntity) => classEntity.createdBy)
+  createdClasses: Class[];
   // ─────────────────────────
   // GOOGLE LOGIN
   // ─────────────────────────

@@ -24,7 +24,7 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 export class ReservationController {
   constructor(private readonly reservationService: ReservationService) {}
 
-  @Roles(Role.STUDENT, Role.TEACHER, Role.ADMIN)
+  @Roles(Role.STUDENT, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('reserve')
   @HttpCode(201)
